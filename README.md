@@ -1,17 +1,11 @@
-<h1 align="center">YOLOv8 NATIVE TRACKING</h1>
+<h1 align="center">YOLOv8 NATIVE TRACKING FOR TRACKING CARS WITH STREAMLIT FRONTEND</h1>
 
-## 💻 Install
+## 💻 How to Run
 
-```bash
-# create python virtual environment
-python3 -m venv venv
-
-# install dependencies
-pip install -r requirements.txt
 ```
-
-## 📸 Execute
-
-```bash
-python3 -m main
+1. install docker on the system
+2. clone this repository
+3. cd yolov8_tracking
+4. `docker build -t cardetection:latest .
+5. docker run -p 80:80 cardetection:latest
 ```

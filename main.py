@@ -3,23 +3,21 @@ import cv2
 from ultralytics import YOLO
 import supervision as sv
 import numpy as np
+import cv2
 
-
-LINE_START = sv.Point(320, 0)
-LINE_END = sv.Point(320, 480)
 
 
 def main():
-    line_counter = sv.LineZone(start=LINE_START, end=LINE_END)
-    line_annotator = sv.LineZoneAnnotator(thickness=2, text_thickness=1, text_scale=0.5)
+    # line_counter = sv.LineZone(start=LINE_START, end=LINE_END)
+    # line_annotator = sv.LineZoneAnnotator(thickness=2, text_thickness=1, text_scale=0.5)
     box_annotator = sv.BoxAnnotator(
         thickness=2,
         text_thickness=1,
         text_scale=0.5
     )
-
-    model = YOLO("yolov8l.pt")
-    for result in model.track(source=0, show=True, stream=True, agnostic_nms=True):
+    predicted_frames = []
+    model = YOLO("yolov8s.pt")
+    for result in model.track(source= "/disk5/viraj/yolov8_project/single_lane_more_traffic.mp4", stream=True):
         
         frame = result.orig_img
         detections = sv.Detections.from_yolov8(result)
@@ -41,14 +39,31 @@ def main():
             labels=labels
         )
 
-        line_counter.trigger(detections=detections)
-        line_annotator.annotate(frame=frame, line_counter=line_counter)
+        traffic_label = "Traffic" if len(labels) > 10 else None
+        color = (0, 0, 255)
 
-        cv2.imshow("yolov8", frame)
+        if traffic_label:
+            cv2.putText(frame, traffic_label, (5, 30), fontFace = cv2.FONT_HERSHEY_TRIPLEX, fontScale = 1, color = color, thickness = 2)
 
-        if (cv2.waitKey(30) == 27):
+        # line_counter.trigger(detections=detections)
+        # line_annotator.annotate(frame=frame, line_counter=line_counter)
+        # line_annotator.annotate(frame=frame)
+        predicted_frames.append(frame)
+        h, w, c = frame.shape
+        size = (w, h)
+        if len(predicted_frames) == 50:
             break
+        # cv2.imwrite()
+        # cv2.imshow("yolov8", frame)
 
+        # if (cv2.waitKey(30) == 27):
+        #     break
+
+    out = cv2.VideoWriter('../output/single_lane_more_traffic.mov',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+    
+    for i in range(len(predicted_frames)):
+        out.write(predicted_frames[i])
+    out.release()
 
 if __name__ == "__main__":
     main()

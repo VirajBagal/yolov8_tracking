@@ -56,8 +56,16 @@ def detect_traffic(video):
         traffic_label = "Traffic" if len(labels) > TRAFFIC_THRESHOLD else None
         color = (0, 0, 255)
 
+
+        # write number of detected vehicles on the image
+        h, w = frame.shape[:2]
+        fontscale = h // 720
+        text_start_y_coordinate = h * 30 // 720
+
         if traffic_label:
-            cv2.putText(frame, traffic_label, (5, 30), fontFace = cv2.FONT_HERSHEY_TRIPLEX, fontScale = 3, color = color, thickness = 2)
+            cv2.putText(frame, traffic_label, (w // 2, text_start_y_coordinate), fontFace = cv2.FONT_HERSHEY_TRIPLEX, fontScale = fontscale, color = color, thickness = 2)
+
+        cv2.putText(frame, f"Num Vehicles: {len(labels)}", (5, text_start_y_coordinate), fontFace = cv2.FONT_HERSHEY_TRIPLEX, fontScale = fontscale, color = color, thickness = 2)
 
         predicted_frames.append(frame)
         h, w, c = frame.shape

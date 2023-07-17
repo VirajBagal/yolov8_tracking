@@ -59,7 +59,7 @@ def detect_traffic(video):
 
         # write number of detected vehicles on the image
         h, w = frame.shape[:2]
-        fontscale = h // 720
+        fontscale = (h // 720)+ 1
         text_start_y_coordinate = h * 30 // 720
 
         if traffic_label:

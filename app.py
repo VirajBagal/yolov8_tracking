@@ -1,7 +1,6 @@
 import streamlit as st
 from ultralytics import YOLO
 import supervision as sv
-import numpy as np
 import cv2
 import os
 import subprocess
@@ -60,7 +59,7 @@ def detect_traffic(video):
         # write number of detected vehicles on the image
         h, w = frame.shape[:2]
         fontscale = (h // 720)+ 1
-        text_start_y_coordinate = h * 30 // 720
+        text_start_y_coordinate = h * 50 // 720
 
         if traffic_label:
             cv2.putText(frame, traffic_label, (w // 2, text_start_y_coordinate), fontFace = cv2.FONT_HERSHEY_TRIPLEX, fontScale = fontscale, color = color, thickness = 2)
@@ -70,7 +69,7 @@ def detect_traffic(video):
         predicted_frames.append(frame)
         h, w, c = frame.shape
         size = (w, h)
-        if len(predicted_frames) == 50:
+        if len(predicted_frames) == 100:
             break
 
     # first save it as mp4 using mp4v codec. But streamlit does not support it. So after this, need to use ffmpeg  to save as mp4 using h264 codec
@@ -88,10 +87,10 @@ def detect_traffic(video):
     return pred_save_path.replace('.mp4', '_h264.mp4')
 
 def main():
-    st.title("Traffic Detection App")
+    st.title("Vehicle Detection")
 
     # Display a file uploader to upload the video
-    uploaded_file = st.file_uploader("Choose a video file", type=["mp4", "mov"])
+    uploaded_file = st.file_uploader("Choose a video file", type=["mp4"])
 
     if uploaded_file:
         save_path = detect_traffic(uploaded_file)
